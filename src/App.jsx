@@ -1,74 +1,92 @@
 import './App.css'
+import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 
 const pets = [
-  { id: 1, name: 'Luna', type: 'Cat', breed: 'British Shorthair', age: '2 yrs', city: 'Tirana', fee: '€120', img: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=600&q=80' },
-  { id: 2, name: 'Max', type: 'Dog', breed: 'Labrador Mix', age: '1 yr', city: 'Durrës', fee: '€180', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=600&q=80' },
-  { id: 3, name: 'Milo', type: 'Dog', breed: 'Cocker Spaniel', age: '3 yrs', city: 'Vlorë', fee: '€150', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80' },
-  { id: 4, name: 'Nala', type: 'Cat', breed: 'Siamese', age: '8 mos', city: 'Shkodër', fee: '€110', img: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80' },
+  { id: 1, name: 'Luna', type: 'Cat', breed: 'British Shorthair', age: '2 yrs', city: 'Tirana', fee: 120, status: 'Available' },
+  { id: 2, name: 'Max', type: 'Dog', breed: 'Labrador Mix', age: '1 yr', city: 'Durrës', fee: 180, status: 'Pending' },
+  { id: 3, name: 'Milo', type: 'Dog', breed: 'Cocker Spaniel', age: '3 yrs', city: 'Vlorë', fee: 150, status: 'Available' },
+  { id: 4, name: 'Nala', type: 'Cat', breed: 'Siamese', age: '8 mos', city: 'Shkodër', fee: 110, status: 'Available' },
 ]
 
-function App() {
+function Shell({ children }) {
   return (
-    <div className="page">
-      <header className="topbar">
-        <div>
-          <h1>PetFinder Pro</h1>
-          <p>Search pets, compare filters, and view nearby listings on map.</p>
-        </div>
-        <button className="cta">Post Listing</button>
-      </header>
-
-      <main className="layout">
-        <aside className="filters">
-          <h3>Filters</h3>
-          <label>Pet type
-            <select><option>All</option><option>Dog</option><option>Cat</option></select>
-          </label>
-          <label>City
-            <select><option>Any city</option><option>Tirana</option><option>Durrës</option><option>Vlorë</option></select>
-          </label>
-          <label>Age
-            <select><option>Any age</option><option>0 - 1 year</option><option>1 - 3 years</option><option>3+ years</option></select>
-          </label>
-          <label>Max fee
-            <input type="range" min="50" max="300" defaultValue="180" />
-          </label>
-          <button className="apply">Apply filters</button>
-        </aside>
-
-        <section className="results">
-          <div className="searchRow">
-            <input placeholder="Search breed, name, shelter..." />
-            <button>Search</button>
-          </div>
-          <div className="cards">
-            {pets.map((p) => (
-              <article key={p.id} className="card">
-                <img src={p.img} alt={p.name} />
-                <div className="cardBody">
-                  <h4>{p.name} <span>{p.type}</span></h4>
-                  <p>{p.breed} • {p.age}</p>
-                  <p>{p.city}</p>
-                  <div className="meta">
-                    <strong>{p.fee}</strong>
-                    <button>View</button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="mapPanel">
-          <h3>Map View</h3>
-          <iframe
-            title="map"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=19.56%2C40.31%2C20.22%2C41.12&layer=mapnik"
-          />
-        </section>
-      </main>
+    <div className="shell">
+      <aside className="sidebar">
+        <h2>PetFinder Pro</h2>
+        <nav>
+          <NavLink to="/">Dashboard</NavLink>
+          <NavLink to="/search">Search + Map</NavLink>
+          <NavLink to="/favorites">Favorites</NavLink>
+          <NavLink to="/messages">Messages</NavLink>
+          <NavLink to="/admin">Admin Listings</NavLink>
+          <NavLink to="/profile">Profile</NavLink>
+          <NavLink to="/settings">Settings</NavLink>
+        </nav>
+      </aside>
+      <main className="content">{children}</main>
     </div>
   )
 }
 
-export default App
+function Dashboard() {
+  return <>
+    <h1>Operations Dashboard</h1>
+    <div className="kpis">
+      <Card title="Active Listings" value="148" />
+      <Card title="New Inquiries" value="23" />
+      <Card title="Adoption Rate" value="68%" />
+      <Card title="Avg. Match Time" value="2.4d" />
+    </div>
+    <div className="panel"><h3>Live activity</h3><p>Realtime feed (frontend mock): new matches, inquiries, approvals, and shelter updates.</p></div>
+  </>
+}
+
+function SearchMap() {
+  return <>
+    <h1>Pet Search & Geospatial Discovery</h1>
+    <div className="row">
+      <div className="panel filters">
+        <h3>Advanced Filters</h3>
+        <input placeholder="Search by name, breed, rescue" />
+        <select><option>All types</option><option>Dog</option><option>Cat</option></select>
+        <select><option>All cities</option><option>Tirana</option><option>Durrës</option><option>Vlorë</option></select>
+        <input type="range" min="50" max="300" defaultValue="170" />
+        <button>Apply Query</button>
+      </div>
+      <div className="panel map"><h3>Map Layer</h3><iframe title="map" src="https://www.openstreetmap.org/export/embed.html?bbox=19.56%2C40.31%2C20.22%2C41.12&layer=mapnik" /></div>
+    </div>
+    <div className="panel"><h3>Results</h3><table><thead><tr><th>Name</th><th>Type</th><th>Breed</th><th>City</th><th>Fee</th><th>Status</th></tr></thead><tbody>{pets.map(p=><tr key={p.id}><td>{p.name}</td><td>{p.type}</td><td>{p.breed}</td><td>{p.city}</td><td>€{p.fee}</td><td>{p.status}</td></tr>)}</tbody></table></div>
+  </>
+}
+
+const Favorites = () => <Page title="Favorites" text="Saved pets, comparison drawer, and shortlist actions (frontend mock)." />
+const Messages = () => <Page title="Messages / Inbox" text="Conversation threads, templates, attachments, and notification states." />
+const Admin = () => <Page title="Admin Listing Management" text="Draft, publish, archive, moderation queue, and listing quality checks." />
+const Profile = () => <Page title="User Profile" text="Account overview, verification badges, and adoption preferences." />
+const Settings = () => <Page title="Settings" text="App configuration, permissions, notification matrix, and theme preferences." />
+
+function Page({ title, text }) {
+  return <><h1>{title}</h1><div className="panel"><p>{text}</p></div></>
+}
+
+function Card({ title, value }) {
+  return <div className="card"><small>{title}</small><strong>{value}</strong></div>
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Shell>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/search" element={<SearchMap />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </Shell>
+    </BrowserRouter>
+  )
+}
